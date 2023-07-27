@@ -1,0 +1,42 @@
+<!-- admin_dashboard.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+  <h2>Add Bot Information</h2>
+  <!-- ... (previous code) -->
+
+  <h2>Search Bot Information</h2>
+  <form action="/admin/dashboard" method="get">
+    <input type="text" id="search-query" name="search" placeholder="Search by name or description" 
+           value="{{ search_query }}">
+    <input type="submit" value="Search">
+  </form>
+
+  <h2>All Bot Information</h2>
+  <ul>
+    {% for bot in bot_data %}
+      <li>
+        <strong>{{ bot[1] }}</strong> - {{ bot[2] }}
+        <a href="/admin/edit-bot/{{ bot[0] }}">Edit</a>
+        <form action="/admin/delete-bot/{{ bot[0] }}" method="post">
+          <input type="submit" value="Delete">
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+  <!-- Pagination links -->
+  <div>
+    {% if current_page > 1 %}
+      <a href="?page={{ current_page - 1 }}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+    {% endif %}
+
+    {% if bot_data|length >= ROWS_PER_PAGE %}
+      <a href="?page={{ current_page + 1 }}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+    {% endif %}
+  </div>
+</body>
+</html>
