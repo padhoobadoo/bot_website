@@ -3,17 +3,25 @@ from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 
 app = Flask(__name__)
-
 DB_NAME = "bot_database.db"
-ROWS_PER_PAGE = 5  # Number of bot records per page
-
-# ... (previous code)
 
 def create_table():
-    # ... (code to create the bot_info table)
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    # Create the bot_info table if it doesn't exist
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS bot_info (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        description TEXT NOT NULL
+    )
+    """)
+
+    conn.commit()
+    conn.close()
 
 def get_paginated_bot_info(page):
-    # Calculate the offset based on the current page and rows per page
     ROWS_PER_PAGE = 10
     offset = (page - 1) * ROWS_PER_PAGE
 
@@ -28,23 +36,22 @@ def get_paginated_bot_info(page):
 
     return paginated_bot_data
 
+@app.route('/')
+def index():
+    return "Welcome to the Bot Website!"
 
-@app.route('/admin/dashboard', methods=['GET', 'POST'])
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    # Handle admin login logic here
+    return render_template('admin_login.html')
+
+@app.route('/admin/dashboard')
 def admin_dashboard():
-    if request.method == 'POST':
-        bot_name = request.form['bot-name']
-        bot_description = request.form['bot-description']
-
-        # Insert the new bot information into the database
-        insert_bot_info(bot_name, bot_description)
-
-        return redirect(url_for('admin_dashboard'))
-
-    # Pagination handling
-    page = request.args.get('page', 1, type=int)
+    page = int(request.args.get('page', 1))
     paginated_bot_data = get_paginated_bot_info(page)
+    return render_template('admin_dashboard.html', bot_data=paginated_bot_data)
 
-    return render_template('admin_dashboard.html', bot_data=paginated_bot_data, current_page=page)
+# Define routes for adding, editing, and deleting bot information here
 
 if __name__ == '__main__':
     create_table()
