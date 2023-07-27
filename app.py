@@ -9,6 +9,9 @@ ROWS_PER_PAGE = 5  # Number of bot records per page
 
 # ... (previous code)
 
+def create_table():
+    # ... (code to create the bot_info table)
+
 def get_paginated_bot_info(page):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
@@ -38,4 +41,5 @@ def admin_dashboard():
     return render_template('admin_dashboard.html', bot_data=paginated_bot_data, current_page=page)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    create_table()
+    app.run(debug=False)
