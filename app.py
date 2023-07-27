@@ -13,15 +13,21 @@ def create_table():
     # ... (code to create the bot_info table)
 
 def get_paginated_bot_info(page):
+    # Calculate the offset based on the current page and rows per page
+    ROWS_PER_PAGE = 10
+    offset = (page - 1) * ROWS_PER_PAGE
+
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
-    offset = (page - 1) * ROWS_PER_PAGE
+    # Retrieve paginated bot information from the database
     cursor.execute("SELECT * FROM bot_info ORDER BY id DESC LIMIT ? OFFSET ?", (ROWS_PER_PAGE, offset))
     paginated_bot_data = cursor.fetchall()
+
     conn.close()
 
     return paginated_bot_data
+
 
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
 def admin_dashboard():
@@ -42,4 +48,4 @@ def admin_dashboard():
 
 if __name__ == '__main__':
     create_table()
-    app.run(debug=False)
+    app.run(debug=True)
