@@ -38,5 +38,4 @@ def admin_dashboard():
     return render_template('admin_dashboard.html', bot_data=paginated_bot_data, current_page=page)
 
 if __name__ == '__main__':
-    create_table()
     app.run(debug=True)
